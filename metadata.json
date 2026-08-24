@@ -1,0 +1,6 @@
+{
+  "name": "Pairwise Attractiveness Perception Experiment",
+  "description": "An experimental research platform studying pairwise perceived physical attractiveness preferences from consenting adult photographs using Bradley-Terry probabilistic modeling.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
