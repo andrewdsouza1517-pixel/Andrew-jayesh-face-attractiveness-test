@@ -189,6 +189,7 @@ Commentary (${roastMode ? `Roast Mode - ${selectedStyle}` : 'Standard'}): ${roas
     verdict: currentResult.roastCommentary || currentResult.playfulCommentary || 'The scoreboard has spoken.',
     loserRoast: currentResult.winner === 'A' ? `${nameB}'s comeback arc starts next season.` : `${nameA}'s comeback arc starts next season.`,
     winnerEnergy: `Commanding lead for ${winnerLabel}.`,
+    spokenVersion: currentResult.roastCommentary || currentResult.playfulCommentary || 'The scoreboard has spoken.',
   };
 
   return (
