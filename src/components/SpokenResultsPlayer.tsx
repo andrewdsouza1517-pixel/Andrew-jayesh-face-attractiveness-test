@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, Play, Pause, Square, Flame, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause, Square, Flame } from 'lucide-react';
 import type { ComparisonResult, ImageInputItem } from '../types/experiment';
 
 interface SpokenResultsPlayerProps {
@@ -31,7 +31,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
     }
   }, []);
 
-  // Construct the spoken narrative text based on result and roast mode
   const generateNarrativeText = (): string => {
     let prankPrefix = '';
     if (prankMode && prankRoastText) {
@@ -60,7 +59,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
       winnerSentence = `${nameB} received the higher predicted preference at ${prefB} percent, compared to ${prefA} percent for ${nameA}.`;
     }
 
-    // Top differing attributes
     const significantAttrs = (result.attributes || [])
       .filter((attr) => Math.abs(attr.A - attr.B) >= 5)
       .slice(0, 3)
@@ -85,7 +83,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
     }
 
     const rawScript = `${prankPrefix}${winnerSentence} ${attrSentence} ${summarySentence} ${commentary ? commentary : ''}`;
-    // Strip emojis so browser SpeechSynthesis speaks pure Hinglish naturally
     return rawScript
       .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
       .replace(/\s+/g, ' ')
@@ -102,7 +99,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
       return;
     }
 
-    // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
     const script = generateNarrativeText();
@@ -112,7 +108,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
     utterance.rate = rate;
     utterance.pitch = 1.0;
 
-    // Pick a natural English voice if available
     const voices = window.speechSynthesis.getVoices();
     const englishVoice = voices.find(
       (v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel'))
@@ -157,7 +152,6 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
     setIsPaused(false);
   };
 
-  // Stop speech when component unmounts or result changes
   useEffect(() => {
     return () => {
       if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -168,67 +162,56 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
 
   if (!isSupported) {
     return (
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-xs text-slate-400 flex items-center gap-3">
-        <VolumeX className="w-4 h-4 text-slate-500 shrink-0" />
+      <div className="bg-[#FAF7F2] dark:bg-[#1E1815] border border-[#E8E2D8] dark:border-[#3D332C] rounded-xl p-4 text-xs text-[#8C7D70] dark:text-[#A69688] flex items-center gap-3">
+        <VolumeX className="w-4 h-4 text-[#8C7D70] dark:text-[#A69688] shrink-0" />
         <span>Speech Synthesis is not supported in this browser window. You can read the full breakdown below.</span>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4 backdrop-blur-md">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+    <div className="bg-white dark:bg-[#1E1815] border border-[#E8E2D8] dark:border-[#3D332C] rounded-xl p-5 shadow-xs dark:shadow-xl space-y-4 transition-colors">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#E8E2D8] dark:border-[#3D332C]">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl">
+          <div className="p-2 bg-[#FAF7F2] dark:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] text-[#8C5E3C] dark:text-[#C99765] rounded-lg">
             <Volume2 className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs font-semibold text-white uppercase tracking-wider flex items-center gap-2">
+            <h4 className="text-xs font-semibold text-[#211813] dark:text-[#F5EFEB] uppercase tracking-wider flex items-center gap-2 font-sans">
               Spoken Audio Summary
               {roastMode && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold flex items-center gap-1">
-                  <Flame className="w-3 h-3 text-amber-400" /> Roast Mode Active
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-1">
+                  <Flame className="w-3 h-3 text-amber-600 dark:text-amber-400" /> Roast Mode
                 </span>
               )}
             </h4>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Listen to the model's verbal breakdown and analysis commentary
+            <p className="text-xs text-[#8C7D70] dark:text-[#A69688] mt-0.5 font-sans">
+              Verbal breakdown and analytical commentary
             </p>
           </div>
         </div>
 
         {/* Audio Rate Selector */}
         <div className="flex items-center gap-2 text-xs font-mono">
-          <span className="text-slate-400 text-[11px]">Speed:</span>
-          <button
-            onClick={() => setRate(0.9)}
-            className={`px-2 py-0.5 rounded text-[11px] transition ${
-              rate === 0.9 ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            0.9x
-          </button>
-          <button
-            onClick={() => setRate(1.0)}
-            className={`px-2 py-0.5 rounded text-[11px] transition ${
-              rate === 1.0 ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            1.0x
-          </button>
-          <button
-            onClick={() => setRate(1.2)}
-            className={`px-2 py-0.5 rounded text-[11px] transition ${
-              rate === 1.2 ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            1.2x
-          </button>
+          <span className="text-[#8C7D70] dark:text-[#A69688] text-[11px]">Speed:</span>
+          {[0.9, 1.0, 1.2].map((r) => (
+            <button
+              key={r}
+              onClick={() => setRate(r)}
+              className={`px-2 py-0.5 rounded text-[11px] transition cursor-pointer ${
+                rate === r
+                  ? 'bg-[#211813] dark:bg-[#C99765] text-[#FAF7F2] dark:text-[#171311] font-bold'
+                  : 'bg-[#FAF7F2] dark:bg-[#2B231F] text-[#8C7D70] dark:text-[#A69688] hover:text-[#211813] dark:hover:text-[#F5EFEB]'
+              }`}
+            >
+              {r.toFixed(1)}x
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Spoken Text Preview Quote */}
-      <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 text-xs text-slate-300 italic leading-relaxed relative">
+      <div className="bg-[#FAF7F2]/60 dark:bg-[#221C18] border border-[#E8E2D8] dark:border-[#3D332C] rounded-lg p-4 text-xs text-[#5C4E43] dark:text-[#D4C7BC] italic leading-relaxed relative shadow-2xs font-editorial">
         <p className="line-clamp-3">"{generateNarrativeText()}"</p>
       </div>
 
@@ -239,7 +222,7 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
             <button
               id="tts-play-btn"
               onClick={handlePlay}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition shadow-md shadow-blue-900/30 flex items-center gap-2 cursor-pointer uppercase tracking-wider"
+              className="px-4 py-2 rounded-lg text-xs font-semibold bg-[#211813] hover:bg-[#3D2C21] dark:bg-[#C99765] dark:hover:bg-[#DDB082] text-[#FAF7F2] dark:text-[#171311] transition shadow-xs flex items-center gap-2 cursor-pointer uppercase tracking-wider font-sans"
               aria-label="Play spoken results"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
@@ -249,7 +232,7 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
             <button
               id="tts-pause-btn"
               onClick={handlePause}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white transition shadow-md shadow-amber-900/30 flex items-center gap-2 cursor-pointer uppercase tracking-wider"
+              className="px-4 py-2 rounded-lg text-xs font-semibold bg-amber-700 hover:bg-amber-600 text-white transition shadow-xs flex items-center gap-2 cursor-pointer uppercase tracking-wider font-sans"
               aria-label="Pause speech"
             >
               <Pause className="w-3.5 h-3.5 fill-current" />
@@ -261,22 +244,21 @@ export const SpokenResultsPlayer: React.FC<SpokenResultsPlayerProps> = ({
             <button
               id="tts-stop-btn"
               onClick={handleStop}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-2 rounded-lg text-xs font-medium bg-[#FAF7F2] hover:bg-[#EAE4DC] dark:bg-[#2B231F] dark:hover:bg-[#382F2A] text-[#5C4E43] dark:text-[#D4C7BC] border border-[#E8E2D8] dark:border-[#3D332C] transition flex items-center gap-1.5 cursor-pointer shadow-2xs font-sans"
               aria-label="Stop speech"
             >
-              <Square className="w-3.5 h-3.5 fill-current text-slate-400" />
+              <Square className="w-3.5 h-3.5 fill-current text-[#8C7D70] dark:text-[#A69688]" />
               <span>Stop</span>
             </button>
           )}
         </div>
 
-        {/* Live Speaking Indicator */}
         {isPlaying && (
-          <div className="flex items-center gap-2 text-xs font-mono text-blue-400 animate-pulse">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#8C5E3C] dark:text-[#C99765] animate-pulse">
             <span className="flex items-end gap-0.5 h-4">
-              <span className="w-1 bg-blue-400 h-2 animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-1 bg-blue-400 h-4 animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-1 bg-blue-400 h-3 animate-bounce" style={{ animationDelay: '300ms' }} />
+              <span className="w-1 bg-[#8C5E3C] dark:bg-[#C99765] h-2 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1 bg-[#8C5E3C] dark:bg-[#C99765] h-4 animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1 bg-[#8C5E3C] dark:bg-[#C99765] h-3 animate-bounce" style={{ animationDelay: '300ms' }} />
             </span>
             <span>Narrating breakdown...</span>
           </div>

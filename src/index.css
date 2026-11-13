@@ -1,1 +1,124 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================================
+   PAIRWISE PERCEPTION LAB - WARM LINEN, IVORY & ESPRESSO DESIGN SYSTEM
+   High-fashion editorial research interface inspired by architectural monographs
+   ========================================================================= */
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, Cambria, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Editorial Warm Linen & Ivory Light Mode */
+  --lab-bg: #FAF7F2;              /* Warm linen / alabaster canvas */
+  --lab-bg-elevated: #F4EFEA;     /* Soft ivory / warm limestone */
+  --lab-surface-card: #FFFFFF;    /* Crisp matte warm parchment card */
+  --lab-surface-subtle: #F3EFE9;  /* Muted warm linen tone */
+  --lab-surface-muted: #EAE4DC;   /* Parchment divider tone */
+  
+  --lab-border-subtle: #E8E2D8;   /* Hairline warm linen border */
+  --lab-border-medium: #D8CEBF;   /* Medium warm taupe divider */
+  --lab-border-strong: #A89A88;   /* Defined warm outline */
+
+  --lab-text-primary: #211813;    /* Deep roasted espresso ink */
+  --lab-text-secondary: #5C4E43;  /* Warm dark taupe / roast */
+  --lab-text-tertiary: #8C7D70;   /* Sandstone muted brown */
+  --lab-text-muted: #A89B8F;      /* Muted parchment caption */
+
+  --lab-accent: #8C5E3C;          /* Warm bronze / saddle cognac */
+  --lab-accent-hover: #73492A;    /* Deep cognac */
+  --lab-accent-subtle: rgba(140, 94, 60, 0.08);
+  --lab-accent-border: rgba(140, 94, 60, 0.28);
+
+  --lab-subject-a: #8C5E3C;       /* Subject Alpha: Warm Bronze Cognac */
+  --lab-subject-b: #4A6B53;       /* Subject Bravo: Warm Olive Moss */
+
+  --lab-shadow-sm: 0 1px 3px 0 rgba(33, 24, 19, 0.04);
+  --lab-shadow-md: 0 4px 16px -2px rgba(33, 24, 19, 0.06);
+  --lab-shadow-lg: 0 12px 32px -4px rgba(33, 24, 19, 0.09);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Sophisticated Roasted Espresso & Warm Charcoal Dark Mode */
+  --lab-bg: #171311;              /* Rich roasted espresso ground */
+  --lab-bg-elevated: #1E1815;     /* Warm espresso surface */
+  --lab-surface-card: #221C18;    /* Matte warm dark parchment panel */
+  --lab-surface-subtle: #2B231F;  /* Subtle espresso tile */
+  --lab-surface-muted: #382F2A;   /* Muted mocha border */
+  
+  --lab-border-subtle: rgba(235, 226, 215, 0.09); /* Hairline warm ivory divider */
+  --lab-border-medium: #3D332C;   /* Medium warm mocha border */
+  --lab-border-strong: #5E5046;   /* Structured warm boundary */
+
+  --lab-text-primary: #F5EFEB;    /* Warm ivory / soft linen text */
+  --lab-text-secondary: #D4C7BC;  /* Warm parchment grey */
+  --lab-text-tertiary: #A69688;   /* Warm sandstone */
+  --lab-text-muted: #7A6C60;      /* Muted espresso caption */
+
+  --lab-accent: #C99765;          /* Warm champagne / antique bronze */
+  --lab-accent-hover: #DDB082;    /* Luminous gold champagne */
+  --lab-accent-subtle: rgba(201, 151, 101, 0.12);
+  --lab-accent-border: rgba(201, 151, 101, 0.30);
+
+  --lab-subject-a: #C99765;       /* Subject Alpha: Warm Champagne Gold */
+  --lab-subject-b: #6B9071;       /* Subject Bravo: Muted Sage Bronze */
+
+  --lab-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
+  --lab-shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.50);
+  --lab-shadow-lg: 0 14px 38px -4px rgba(0, 0, 0, 0.70);
+}
+
+/* Base Body transitions and typography */
+html {
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--lab-bg);
+  color: var(--lab-text-primary);
+  font-family: var(--font-sans);
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+/* Custom discreet scrollbars in warm tones */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 125, 112, 0.28);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(201, 151, 101, 0.22);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 125, 112, 0.50);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 151, 101, 0.40);
+}

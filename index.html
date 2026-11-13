@@ -3,12 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pairwise Attractiveness Perception Experiment</title>
-    <meta name="description" content="An 18+ research and experimental platform studying pairwise perceived physical attractiveness preferences from photographs using Bradley-Terry probabilistic modeling." />
-    <meta property="og:title" content="Pairwise Attractiveness Perception Experiment" />
-    <meta property="og:description" content="Bradley-Terry psychometric comparative analysis of perceived attractiveness preferences." />
+    <title>ANDESHA — AI-Powered Visual Analysis Platform</title>
+    <meta name="description" content="ANDESHA: See Beyond the Image. Understand the Data. An AI-powered visual analysis platform created by Andrew and Apeksha for our school exhibition." />
+    <meta property="og:title" content="ANDESHA — AI-Powered Visual Analysis Platform" />
+    <meta property="og:description" content="See Beyond the Image. Understand the Data. An AI-powered visual analysis platform created by Andrew and Apeksha for our school exhibition." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+    <script>
+      (function() {
+        try {
+          var key = 'pairwise_lab_theme_preference';
+          var saved = localStorage.getItem(key);
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = saved === 'dark' || (saved !== 'light' && prefersDark);
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark');
+            root.classList.remove('light');
+            root.setAttribute('data-theme', 'dark');
+            root.style.colorScheme = 'dark';
+          } else {
+            root.classList.add('light');
+            root.classList.remove('dark');
+            root.setAttribute('data-theme', 'light');
+            root.style.colorScheme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

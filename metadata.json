@@ -1,6 +1,6 @@
 {
-  "name": "Pairwise Attractiveness Perception Experiment",
-  "description": "An experimental research platform studying pairwise perceived physical attractiveness preferences from consenting adult photographs using Bradley-Terry probabilistic modeling.",
+  "name": "ANDESHA — AI-Powered Visual Analysis Platform",
+  "description": "An AI-powered visual analysis platform created by Andrew and Apeksha for a school exhibition. See Beyond the Image. Understand the Data.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -76,31 +76,31 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4">
-      <div className="bg-slate-900 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-800 backdrop-blur-lg">
-        <div className="bg-slate-950/90 text-white px-5 py-4 flex items-center justify-between border-b border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171311]/70 backdrop-blur-md p-4">
+      <div className="bg-white dark:bg-[#1E1815] rounded-xl max-w-lg w-full overflow-hidden shadow-xl dark:shadow-2xl border border-[#E8E2D8] dark:border-[#3D332C] transition-colors">
+        <div className="bg-[#FAF7F2] dark:bg-[#221C18] text-[#211813] dark:text-[#F5EFEB] px-5 py-4 flex items-center justify-between border-b border-[#E8E2D8] dark:border-[#3D332C]">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg">
+            <div className="p-1.5 bg-white dark:bg-[#171311] border border-[#E8E2D8] dark:border-[#3D332C] text-[#8C5E3C] dark:text-[#C99765] rounded-md">
               <Camera className="w-4 h-4" />
             </div>
-            <h3 className="font-semibold text-sm">{title}</h3>
+            <h3 className="font-editorial font-medium text-sm">{title}</h3>
           </div>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-white rounded-md cursor-pointer">
+          <button onClick={onClose} className="p-1 text-[#8C7D70] hover:text-[#211813] dark:hover:text-[#F5EFEB] rounded-md cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-5 flex flex-col items-center">
+        <div className="p-5 flex flex-col items-center font-sans">
           {error ? (
-            <div className="p-4 bg-red-500/10 text-red-400 text-xs rounded-xl border border-red-500/20 w-full text-center font-mono">
+            <div className="p-4 bg-red-500/10 text-red-700 dark:text-red-400 text-xs rounded-lg border border-red-500/20 w-full text-center font-mono">
               {error}
             </div>
           ) : capturedPreview ? (
-            <div className="w-full aspect-square max-w-xs rounded-xl overflow-hidden border border-slate-700 relative shadow-inner">
+            <div className="w-full aspect-square max-w-xs rounded-lg overflow-hidden border border-[#E8E2D8] dark:border-[#3D332C] relative shadow-inner">
               <img src={capturedPreview} alt="Captured preview" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="w-full aspect-square max-w-xs rounded-xl overflow-hidden bg-slate-950 border border-slate-700 relative shadow-inner">
+            <div className="w-full aspect-square max-w-xs rounded-lg overflow-hidden bg-[#171311] border border-[#E8E2D8] dark:border-[#3D332C] relative shadow-inner">
               <video
                 ref={videoRef}
                 autoPlay
@@ -108,14 +108,14 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
                 muted
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 border-2 border-white/20 pointer-events-none rounded-xl flex items-center justify-center">
+              <div className="absolute inset-0 border border-white/20 pointer-events-none rounded-lg flex items-center justify-center">
                 <div className="w-48 h-60 border border-dashed border-white/40 rounded-full" />
               </div>
             </div>
           )}
 
-          <p className="text-[11px] text-slate-400 mt-3 text-center">
-            Position head within the frame. Ensure even lighting and neutral background.
+          <p className="text-[11px] text-[#8C7D70] dark:text-[#A69688] mt-3 text-center">
+            Position head within the frame. Ensure balanced lighting and neutral background.
           </p>
 
           <div className="mt-5 flex items-center gap-3 w-full justify-center">
@@ -123,14 +123,14 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
               <>
                 <button
                   onClick={handleRetake}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 rounded-lg text-xs font-medium border border-[#E8E2D8] dark:border-[#3D332C] bg-[#FAF7F2] hover:bg-[#EAE4DC] dark:bg-[#2B231F] dark:hover:bg-[#382F2A] text-[#5C4E43] dark:text-[#D4C7BC] flex items-center gap-1.5 cursor-pointer shadow-2xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   Retake
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="px-5 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-1.5 cursor-pointer shadow-md shadow-blue-900/30"
+                  className="px-5 py-2 rounded-lg text-xs font-semibold bg-[#211813] hover:bg-[#3D2C21] dark:bg-[#C99765] dark:hover:bg-[#DDB082] text-[#FAF7F2] dark:text-[#171311] flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <Check className="w-3.5 h-3.5" />
                   Use Photo
@@ -140,7 +140,7 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
               <button
                 onClick={handleSnap}
                 disabled={Boolean(error)}
-                className="px-6 py-2.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white flex items-center gap-2 cursor-pointer shadow-md shadow-blue-900/30 disabled:opacity-50"
+                className="px-6 py-2.5 rounded-lg text-xs font-semibold bg-[#211813] hover:bg-[#3D2C21] dark:bg-[#C99765] dark:hover:bg-[#DDB082] text-[#FAF7F2] dark:text-[#171311] flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
               >
                 <Camera className="w-4 h-4" />
                 Capture Snapshot

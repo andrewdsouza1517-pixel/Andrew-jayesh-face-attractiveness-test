@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, CheckCircle2, Minus, Info, Sparkles } from 'lucide-react';
+import { Info } from 'lucide-react';
 import type { ComparisonAttribute } from '../types/experiment';
 
 interface AttributeComparisonListProps {
@@ -8,37 +8,90 @@ interface AttributeComparisonListProps {
   nameB?: string;
 }
 
+const getFriendlyCategoryInfo = (rawName: string): { title: string; hint?: string } => {
+  const normalized = rawName.trim().toLowerCase();
+  if (normalized.includes('symmetry') || normalized.includes('proportionality')) {
+    return {
+      title: 'Visual Balance & Symmetry',
+      hint: 'How balanced and proportional the features appear in the portrait',
+    };
+  }
+  if (normalized.includes('grooming')) {
+    return {
+      title: 'Grooming & Neatness',
+      hint: 'Overall neatness and portrait preparation',
+    };
+  }
+  if (normalized.includes('facial presentation')) {
+    return {
+      title: 'Facial Presentation',
+      hint: 'Clarity and natural visibility of facial features',
+    };
+  }
+  if (normalized.includes('hairstyle') || normalized === 'hair') {
+    return {
+      title: 'Hair Styling',
+      hint: 'How hair framing complements the overall portrait',
+    };
+  }
+  if (normalized.includes('expression')) {
+    return {
+      title: 'Facial Expression & Warmth',
+      hint: 'Openness, smile, and approachable demeanor',
+    };
+  }
+  if (normalized.includes('harmony')) {
+    return {
+      title: 'Overall Visual Harmony',
+      hint: 'How cohesively all visual elements work together',
+    };
+  }
+  if (normalized === 'styling') {
+    return {
+      title: 'Wardrobe & Styling',
+      hint: 'Clothing and overall visual styling',
+    };
+  }
+  if (normalized.includes('image conditions') || normalized.includes('lighting')) {
+    return {
+      title: 'Lighting, Framing & Sharpness',
+      hint: 'Camera focus, brightness, and framing quality',
+    };
+  }
+  return { title: rawName };
+};
+
 export const AttributeComparisonList: React.FC<AttributeComparisonListProps> = ({
   attributes = [],
-  nameA = 'Person A',
-  nameB = 'Person B',
+  nameA = 'Image A',
+  nameB = 'Image B',
 }) => {
   return (
-    <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 backdrop-blur-md">
+    <div className="bg-white dark:bg-[#1E1815] border border-[#E8E2D8] dark:border-[#3D332C] rounded-xl p-6 shadow-xs dark:shadow-xl space-y-6 transition-colors">
       {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E8E2D8] dark:border-[#3D332C]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h3 className="text-sm font-semibold text-white tracking-wide uppercase">
-              Model Visual Analysis Categories
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-base font-editorial font-medium text-[#211813] dark:text-[#F5EFEB] tracking-tight">
+              Category Breakdown: 8 Visual Characteristics
             </h3>
-            <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded">
-              8 AXES
+            <span className="text-xs font-sans text-[#8C7D70] dark:text-[#A69688]">
+              · 0–100 Scale
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Comparative evaluation across standardized visual presentation and photographic dimensions
+          <p className="text-xs sm:text-sm text-[#5C4E43] dark:text-[#D4C7BC] mt-1 font-sans">
+            This chart compares both images category by category so you can see where each image scored higher.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-mono">
+        <div className="flex items-center gap-4 text-xs font-sans">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-            <span className="text-slate-300 font-medium">{nameA}</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#8C5E3C] dark:bg-[#C99765]" />
+            <span className="text-[#5C4E43] dark:text-[#D4C7BC] font-medium">{nameA}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <span className="text-slate-300 font-medium">{nameB}</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4A6B53] dark:bg-[#6B9071]" />
+            <span className="text-[#5C4E43] dark:text-[#D4C7BC] font-medium">{nameB}</span>
           </div>
         </div>
       </div>
@@ -48,57 +101,64 @@ export const AttributeComparisonList: React.FC<AttributeComparisonListProps> = (
         {attributes.map((attr, idx) => {
           const isWinnerA = attr.winner === 'A';
           const isWinnerB = attr.winner === 'B';
-          const isTie = attr.winner === 'TIE';
+          const friendly = getFriendlyCategoryInfo(attr.name);
 
           return (
             <div
               key={idx}
-              className="bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/50 rounded-xl p-4 transition space-y-3"
+              className="bg-[#FAF7F2]/60 hover:bg-[#FAF7F2] dark:bg-[#221C18] dark:hover:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] rounded-lg p-4 transition space-y-3 shadow-2xs"
             >
-              {/* Category Name & Winner Tag */}
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-slate-200">
-                  {attr.name}
-                </span>
+              {/* Category Name & Winner Label */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-semibold text-[#211813] dark:text-[#F5EFEB] font-sans block">
+                    {friendly.title}
+                  </span>
+                  {friendly.hint && (
+                    <span className="text-[11px] text-[#8C7D70] dark:text-[#A69688] font-sans block">
+                      {friendly.hint}
+                    </span>
+                  )}
+                </div>
 
                 <span
-                  className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border uppercase tracking-wider shrink-0 ${
+                  className={`text-[11px] font-mono font-medium shrink-0 ${
                     isWinnerA
-                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                      ? 'text-[#8C5E3C] dark:text-[#C99765]'
                       : isWinnerB
-                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'text-[#4A6B53] dark:text-[#6B9071]'
+                      : 'text-[#8C7D70] dark:text-[#A69688]'
                   }`}
                 >
-                  {isWinnerA ? `Favors ${nameA}` : isWinnerB ? `Favors ${nameB}` : 'Even Balance'}
+                  {isWinnerA ? `Higher: ${nameA}` : isWinnerB ? `Higher: ${nameB}` : 'Even Match'}
                 </span>
               </div>
 
               {/* Progress Bars for A and B */}
               <div className="space-y-2 text-xs font-mono">
-                {/* Person A Bar */}
+                {/* Image A Bar */}
                 <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-400">
-                    <span className="text-blue-400 font-semibold">{nameA}</span>
-                    <span>{attr.A} / 100</span>
+                  <div className="flex justify-between text-[11px] text-[#8C7D70] dark:text-[#A69688]">
+                    <span className="text-[#8C5E3C] dark:text-[#C99765] font-semibold font-sans">{nameA}</span>
+                    <span className="tabular-nums">{attr.A} / 100</span>
                   </div>
-                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/40">
+                  <div className="h-2 w-full bg-[#FAF7F2] dark:bg-[#171311] rounded-full overflow-hidden border border-[#E8E2D8] dark:border-[#3D332C]">
                     <div
-                      className="h-full bg-blue-500 rounded-full transition-all duration-700 ease-out"
+                      className="h-full bg-[#8C5E3C] dark:bg-[#C99765] rounded-full transition-all duration-700 ease-out"
                       style={{ width: `${Math.max(5, Math.min(100, attr.A))}%` }}
                     />
                   </div>
                 </div>
 
-                {/* Person B Bar */}
+                {/* Image B Bar */}
                 <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-400">
-                    <span className="text-emerald-400 font-semibold">{nameB}</span>
-                    <span>{attr.B} / 100</span>
+                  <div className="flex justify-between text-[11px] text-[#8C7D70] dark:text-[#A69688]">
+                    <span className="text-[#4A6B53] dark:text-[#6B9071] font-semibold font-sans">{nameB}</span>
+                    <span className="tabular-nums">{attr.B} / 100</span>
                   </div>
-                  <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/40">
+                  <div className="h-2 w-full bg-[#FAF7F2] dark:bg-[#171311] rounded-full overflow-hidden border border-[#E8E2D8] dark:border-[#3D332C]">
                     <div
-                      className="h-full bg-emerald-500 rounded-full transition-all duration-700 ease-out"
+                      className="h-full bg-[#4A6B53] dark:bg-[#6B9071] rounded-full transition-all duration-700 ease-out"
                       style={{ width: `${Math.max(5, Math.min(100, attr.B))}%` }}
                     />
                   </div>
@@ -106,7 +166,7 @@ export const AttributeComparisonList: React.FC<AttributeComparisonListProps> = (
               </div>
 
               {/* Explanation Note */}
-              <p className="text-[11px] text-slate-400 leading-relaxed pt-1 border-t border-slate-700/30">
+              <p className="text-xs text-[#5C4E43] dark:text-[#D4C7BC] leading-relaxed pt-2 border-t border-[#E8E2D8] dark:border-[#3D332C]/60 font-sans">
                 {attr.explanation}
               </p>
             </div>
@@ -115,10 +175,10 @@ export const AttributeComparisonList: React.FC<AttributeComparisonListProps> = (
       </div>
 
       {/* Category Disclaimer Callout */}
-      <div className="pt-2 text-center text-[11px] text-slate-500 italic border-t border-slate-800 flex items-center justify-center gap-1.5">
-        <Info className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+      <div className="pt-3 text-center text-xs text-[#5C4E43] dark:text-[#D4C7BC] border-t border-[#E8E2D8] dark:border-[#3D332C] flex items-center justify-center gap-2 font-sans">
+        <Info className="w-4 h-4 text-[#8C5E3C] dark:text-[#C99765] shrink-0" />
         <span>
-          These are AI predictions of perceived attractiveness based on the model’s reference data, not objective measurements.
+          These scores show how the model evaluated the selected visual characteristics. They are model-generated estimates, not objective measurements.
         </span>
       </div>
     </div>

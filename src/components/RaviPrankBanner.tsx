@@ -33,21 +33,21 @@ export const RaviPrankBanner: React.FC<RaviPrankBannerProps> = ({ raviName }) =>
   return (
     <div
       id="ravi-prank-banner"
-      className="bg-gradient-to-r from-purple-950/80 via-slate-900/90 to-pink-950/80 border-2 border-purple-500/50 rounded-2xl p-6 shadow-2xl space-y-4 backdrop-blur-md relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300"
+      className="bg-gradient-to-r from-purple-50 via-slate-50 to-pink-50 dark:from-purple-950/80 dark:via-slate-900/90 dark:to-pink-950/80 border-2 border-purple-300 dark:border-purple-500/50 rounded-2xl p-6 shadow-sm dark:shadow-2xl space-y-4 backdrop-blur-md relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 transition-colors"
     >
       {/* Background ambient glowing accent */}
       <div className="absolute -right-12 -top-12 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Banner Tag: REQUIRED DISCLAIMER */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-purple-500/30 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-purple-200 dark:border-purple-500/30 pb-3">
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-md bg-purple-500/20 border border-purple-500/40 text-purple-300 text-[11px] font-mono font-extrabold uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+          <span className="px-3 py-1 rounded-md bg-purple-500/15 border border-purple-500/30 text-purple-800 dark:text-purple-300 text-[11px] font-mono font-extrabold uppercase tracking-widest flex items-center gap-1.5 shadow-xs">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
             PRANK RESULT — FOR ENTERTAINMENT ONLY
           </span>
         </div>
-        <span className="text-[10px] font-mono text-purple-300/70 uppercase tracking-wider bg-purple-900/40 px-2 py-0.5 rounded border border-purple-700/40">
+        <span className="text-[10px] font-mono text-purple-700 dark:text-purple-300/70 uppercase tracking-wider bg-purple-100 dark:bg-purple-900/40 px-2 py-0.5 rounded border border-purple-300/60 dark:border-purple-700/40">
           FICTIONAL COMEDIC OVERLAY
         </span>
       </div>
@@ -56,23 +56,23 @@ export const RaviPrankBanner: React.FC<RaviPrankBannerProps> = ({ raviName }) =>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-amber-300 tracking-tight flex items-center gap-2">
+            <h3 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-pink-600 to-amber-600 dark:from-purple-300 dark:via-pink-300 dark:to-amber-300 tracking-tight flex items-center gap-2">
               RAVI PRANK MODE 😈
             </h3>
           </div>
-          <p className="text-xs text-purple-200/80 mt-1">
-            Special comedic simulation active for subject <span className="font-bold text-white">{raviName}</span>
+          <p className="text-xs text-purple-900/80 dark:text-purple-200/80 mt-1">
+            Special comedic simulation active for subject <span className="font-bold text-slate-900 dark:text-white">{raviName}</span>
           </p>
         </div>
 
         {/* Score Badge */}
-        <div className="bg-purple-950/90 border border-purple-500/60 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-lg shadow-purple-950/50">
-          <Flame className="w-6 h-6 text-pink-400 animate-pulse shrink-0" />
+        <div className="bg-white dark:bg-purple-950/90 border border-purple-300 dark:border-purple-500/60 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-xs dark:shadow-lg dark:shadow-purple-950/50">
+          <Flame className="w-6 h-6 text-pink-600 dark:text-pink-400 animate-pulse shrink-0" />
           <div>
-            <div className="text-[10px] font-mono uppercase tracking-wider text-purple-300 font-bold">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-purple-700 dark:text-purple-300 font-bold">
               FICTIONAL PRANK SCORE
             </div>
-            <div className="text-lg font-black font-mono text-pink-300 tracking-tight">
+            <div className="text-lg font-black font-mono text-pink-600 dark:text-pink-300 tracking-tight">
               10/100 — ABSOLUTELY DISASTROUS
             </div>
           </div>
@@ -80,31 +80,31 @@ export const RaviPrankBanner: React.FC<RaviPrankBannerProps> = ({ raviName }) =>
       </div>
 
       {/* Dynamic Exaggerated Roast Box */}
-      <div className="bg-slate-950/70 border border-purple-500/30 rounded-xl p-4 shadow-inner space-y-2">
+      <div className="bg-white dark:bg-slate-950/70 border border-purple-200 dark:border-purple-500/30 rounded-xl p-4 shadow-xs dark:shadow-inner space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-purple-400 font-bold flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-pink-400" /> Dynamic Comedic Roast (#{currentIdx + 1})
+          <span className="text-[10px] font-mono uppercase tracking-wider text-purple-700 dark:text-purple-400 font-bold flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-pink-500 dark:text-pink-400" /> Dynamic Comedic Roast (#{currentIdx + 1})
           </span>
           <button
             id="spin-prank-roast-btn"
             onClick={handleNextRoast}
-            className="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-400/40 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-600/30 dark:hover:bg-purple-600/50 text-purple-800 dark:text-purple-200 border border-purple-300 dark:border-purple-400/40 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
             title="Generate a fresh joke"
           >
-            <RefreshCw className="w-3 h-3 text-pink-300" />
+            <RefreshCw className="w-3 h-3 text-pink-500 dark:text-pink-300" />
             <span>Spin Fresh Roast 🎲</span>
           </button>
         </div>
-        <p className="text-sm font-medium text-purple-100 italic leading-relaxed pt-1">
+        <p className="text-sm font-medium text-slate-800 dark:text-purple-100 italic leading-relaxed pt-1">
           "{currentRoast}"
         </p>
       </div>
 
       {/* Strict Compliance Footnote */}
-      <div className="text-[11px] text-purple-300/70 bg-purple-950/30 border border-purple-800/40 rounded-lg p-2.5 flex items-start gap-2">
-        <ShieldAlert className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+      <div className="text-[11px] text-purple-800/80 dark:text-purple-300/70 bg-purple-100/60 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/40 rounded-lg p-2.5 flex items-start gap-2">
+        <ShieldAlert className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0 mt-0.5" />
         <p className="leading-normal">
-          <strong className="text-purple-200 font-semibold">Disclaimer:</strong> This 10/100 score is a fictional entertainment prank generated strictly because Prank Mode is ON for '{raviName}'. The genuine AI vision model and Bradley–Terry calculation remain completely unaltered and are displayed below.
+          <strong className="text-purple-900 dark:text-purple-200 font-semibold">Disclaimer:</strong> This 10/100 score is a fictional entertainment prank generated strictly because Prank Mode is ON for '{raviName}'. The genuine AI vision model and Bradley–Terry calculation remain completely unaltered and are displayed below.
         </p>
       </div>
     </div>

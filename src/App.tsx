@@ -2,19 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Scale,
   Sparkles,
-  ArrowRight,
   ShieldCheck,
   AlertCircle,
   Loader2,
   RefreshCw,
-  Info,
-  CheckCircle2,
   EyeOff,
   Sliders,
   Flame,
   ArrowLeft,
   Clock,
-  Layers,
+  Info,
+  CheckCircle2,
 } from 'lucide-react';
 import type { ComparisonResult, ImageInputItem, AnalysisStage } from './types/experiment';
 import { Header } from './components/Header';
@@ -24,13 +22,22 @@ import { PresetSelector } from './components/PresetSelector';
 import { ResultsView } from './components/ResultsView';
 import { MethodologyDrawer } from './components/MethodologyDrawer';
 import { SessionHistoryModal } from './components/SessionHistoryModal';
+import { LiquidSculptureHero } from './components/LiquidSculptureHero';
+import { CursorSpotlightOverlay } from './components/CursorSpotlightOverlay';
+import { AboutModal } from './components/AboutModal';
+import { HowItWorksSection } from './components/HowItWorksSection';
+import { ScienceBehindSection } from './components/ScienceBehindSection';
+
+import { ExhibitionHomepageIntro } from './components/ExhibitionHomepageIntro';
+import { ExhibitionModeGuide } from './components/ExhibitionModeGuide';
+import { AboutTheTeamPage } from './components/AboutTheTeamPage';
 
 const CONSENT_STORAGE_KEY = 'pairwise_experiment_consent_v1';
 const HISTORY_STORAGE_KEY = 'pairwise_experiment_history_v1';
 const ROAST_MODE_STORAGE_KEY = 'pairwise_experiment_roast_mode_v1';
 const PRANK_MODE_STORAGE_KEY = 'pairwise_experiment_prank_mode_v1';
+const SPOTLIGHT_STORAGE_KEY = 'pairwise_experiment_spotlight_v1';
 
-// Total client timeout ceiling (65 seconds)
 const CLIENT_FETCH_TIMEOUT_MS = 65000;
 
 export default function App() {
@@ -41,16 +48,19 @@ export default function App() {
   const [prankMode, setPrankMode] = useState<boolean>(false);
   const [activeResult, setActiveResult] = useState<ComparisonResult | null>(null);
   const [history, setHistory] = useState<ComparisonResult[]>([]);
+  const [isSpotlightActive, setIsSpotlightActive] = useState<boolean>(true);
+  const [isExhibitionMode, setIsExhibitionMode] = useState<boolean>(false);
+  const [exhibitionStep, setExhibitionStep] = useState<number>(1);
+  const [showTeamPage, setShowTeamPage] = useState<boolean>(false);
 
-  // Explicit Analysis State Machine
   const [analysisStage, setAnalysisStage] = useState<AnalysisStage>('IDLE');
   const [stageMessage, setStageMessage] = useState<string>('');
   const [errorDetails, setErrorDetails] = useState<{ title: string; message: string; isTimeout?: boolean } | null>(null);
 
+  const [isAboutOpen, setIsAboutOpen] = useState<boolean>(false);
   const [isMethodologyOpen, setIsMethodologyOpen] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
-  // Ref to abort ongoing fetch if user cancels or resets
   const abortControllerRef = useRef<AbortController | null>(null);
   const stageTimersRef = useRef<NodeJS.Timeout[]>([]);
 
@@ -59,7 +69,6 @@ export default function App() {
     stageTimersRef.current = [];
   };
 
-  // Initialize consent, history, and roast mode from localStorage
   useEffect(() => {
     const savedConsent = localStorage.getItem(CONSENT_STORAGE_KEY);
     if (savedConsent === 'true') {
@@ -72,6 +81,10 @@ export default function App() {
     const savedPrank = localStorage.getItem(PRANK_MODE_STORAGE_KEY);
     if (savedPrank === 'true') {
       setPrankMode(true);
+    }
+    const savedSpotlight = localStorage.getItem(SPOTLIGHT_STORAGE_KEY);
+    if (savedSpotlight !== null) {
+      setIsSpotlightActive(savedSpotlight === 'true');
     }
     try {
       const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
@@ -98,13 +111,20 @@ export default function App() {
     localStorage.setItem(PRANK_MODE_STORAGE_KEY, String(enabled));
   };
 
+  const handleToggleSpotlight = () => {
+    setIsSpotlightActive((prev) => {
+      const next = !prev;
+      localStorage.setItem(SPOTLIGHT_STORAGE_KEY, String(next));
+      return next;
+    });
+  };
+
   const handleSelectPreset = async (
     dataUrlA: string,
     nameA: string,
     dataUrlB: string,
     nameB: string
   ) => {
-    // Extract actual name from preset names if possible (e.g. removing file extensions, etc) or use as is
     setImageA({
       id: 'preset_a_' + Date.now(),
       name: nameA,
@@ -127,7 +147,6 @@ export default function App() {
   };
 
   const handleRunComparison = async () => {
-    // 1. Validation phase
     if (!imageA || !imageB) {
       setErrorDetails({
         title: 'Photographs Required',
@@ -136,9 +155,7 @@ export default function App() {
       setAnalysisStage('ERROR');
       return;
     }
-    
 
-    // Cancel any existing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -152,33 +169,31 @@ export default function App() {
 
     setErrorDetails(null);
     setAnalysisStage('VALIDATING');
-    setStageMessage('Validating photograph data & resolution integrity...');
+    setStageMessage('Reading the images and checking resolution...');
 
-    // Progress Stage progression timers
     const timer1 = setTimeout(() => {
       setAnalysisStage('UPLOADING');
-      setStageMessage('Encrypting and sending portrait vectors to AI perception service...');
-    }, 600);
+      setStageMessage('Analysing visual characteristics across both images...');
+    }, 800);
     stageTimersRef.current.push(timer1);
 
     const timer2 = setTimeout(() => {
       setAnalysisStage('ANALYZING');
-      setStageMessage('Evaluating 8 visual axes (symmetry, lighting, expression warmth, styling)...');
-    }, 2200);
+      setStageMessage('Comparing the two results side-by-side...');
+    }, 3500);
     stageTimersRef.current.push(timer2);
 
     const timer3 = setTimeout(() => {
-      setStageMessage('Primary AI model busy — utilizing high-speed backup model...');
+      setStageMessage('Still comparing visual characteristics — thank you for waiting...');
     }, 12000);
     stageTimersRef.current.push(timer3);
 
     const timer4 = setTimeout(() => {
       setAnalysisStage('PROCESSING_RESULT');
-      setStageMessage('Computing Bradley–Terry probabilistic ranking & confidence intervals...');
+      setStageMessage('Preparing the explanation and visual charts...');
     }, 18000);
     stageTimersRef.current.push(timer4);
 
-    // Hard client-side timeout timer
     const hardTimeoutTimer = setTimeout(() => {
       console.warn(`[Frontend] [${analysisId}] Client hard timeout (${CLIENT_FETCH_TIMEOUT_MS}ms) fired.`);
       controller.abort();
@@ -196,7 +211,9 @@ export default function App() {
         body: JSON.stringify({
           analysisId,
           imageA: imageA.dataUrl,
-          imageB: imageB.dataUrl, nameA: imageA.personName || imageA.name || "Person A", nameB: imageB.personName || imageB.name || "Person B",
+          imageB: imageB.dataUrl,
+          nameA: imageA.personName || imageA.name || "Person A",
+          nameB: imageB.personName || imageB.name || "Person B",
         }),
       });
 
@@ -209,7 +226,7 @@ export default function App() {
       }
 
       setAnalysisStage('PROCESSING_RESULT');
-      setStageMessage('Finalizing statistical outputs and commentary...');
+      setStageMessage('Preparing the explanation and visual charts...');
 
       const result: ComparisonResult = await response.json();
 
@@ -346,55 +363,122 @@ export default function App() {
     analysisStage === 'ANALYZING' ||
     analysisStage === 'PROCESSING_RESULT';
 
+  if (showTeamPage) {
+    return <AboutTheTeamPage onReturnToApp={() => setShowTeamPage(false)} />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#0F172A] text-slate-200 flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#171311] text-[#211813] dark:text-[#F5EFEB] flex flex-col font-sans antialiased selection:bg-[#8C5E3C] selection:text-white transition-colors duration-200">
       {/* 18+ Consent Gate Modal */}
       <ConsentGateModal
         isOpen={!hasConsented}
         onConfirm={handleConsentConfirm}
       />
 
+      {/* Dynamic Cursor Spotlight & Torch Reveal Shroud */}
+      <CursorSpotlightOverlay
+        isActive={isSpotlightActive}
+        onToggleActive={handleToggleSpotlight}
+      />
+
       {/* Main Navigation Header */}
       <Header
+        onOpenAbout={() => setIsAboutOpen(true)}
         onOpenMethodology={() => setIsMethodologyOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
+        onOpenTeam={() => setShowTeamPage(true)}
         historyCount={history.length}
         onReset={handleReset}
+        isSpotlightActive={isSpotlightActive}
+        onToggleSpotlight={handleToggleSpotlight}
       />
 
       {/* Main Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Research Context Banner with Roast Mode Toggle */}
-        <section className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6 backdrop-blur-md">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Exhibition Mode Guide Banner (When Active) */}
+        {isExhibitionMode && (
+          <ExhibitionModeGuide
+            currentStep={exhibitionStep}
+            onStepChange={setExhibitionStep}
+            onExit={() => setIsExhibitionMode(false)}
+            hasResult={Boolean(activeResult)}
+            onRunComparison={handleRunComparison}
+            onOpenMethodology={() => setIsMethodologyOpen(true)}
+          />
+        )}
+
+        {/* Flagship Exhibition Homepage Intro & Hero */}
+        {!activeResult && (
+          <div className="space-y-8">
+            <ExhibitionHomepageIntro
+              onStartComparison={() => {
+                const el = document.getElementById('comparison-lab-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              onOpenExhibitionMode={() => {
+                setIsExhibitionMode(true);
+                setExhibitionStep(1);
+                setTimeout(() => {
+                  const el = document.getElementById('comparison-lab-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+            />
+            <LiquidSculptureHero
+              onScrollToLab={() => {
+                const el = document.getElementById('comparison-lab-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              onOpenAbout={() => setIsAboutOpen(true)}
+              roastMode={roastMode}
+              prankMode={prankMode}
+            />
+          </div>
+        )}
+
+        {/* Research Context Banner */}
+        <section
+          id="comparison-lab-section"
+          className="bg-white dark:bg-[#1E1815] border border-[#E8E2D8] dark:border-[#3D332C] rounded-xl p-6 shadow-xs dark:shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6 scroll-mt-20 transition-colors"
+        >
           <div className="max-w-2xl space-y-2">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-mono font-bold uppercase tracking-wider">
-                Bradley–Terry Model
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-mono font-bold text-[#8C5E3C] dark:text-[#C99765] uppercase tracking-wider">
+                ANDESHA Exhibition Lab
               </span>
-              <h2 className="text-xl font-light text-white tracking-tight">
-                Pairwise Perception Analysis Lab
-              </h2>
+              <span aria-hidden="true" className="text-[#D8CEBF] dark:text-[#3D332C]">·</span>
+              <span className="text-[#8C7D70] dark:text-[#A69688]">By Andrew & Apeksha</span>
+              <span aria-hidden="true" className="text-[#D8CEBF] dark:text-[#3D332C]">·</span>
+              <span className="text-[#8C7D70] dark:text-[#A69688]">8 Visual Dimensions</span>
             </div>
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-              Quantifies relative pairwise preference probabilities across 8 visual and photographic dimensions based on adult observer calibration data.
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-editorial font-medium text-[#211813] dark:text-[#F5EFEB] tracking-tight">
+                Pairwise Visual Analysis Engine
+              </h2>
+              <p className="text-xs sm:text-sm font-editorial italic text-[#8C5E3C] dark:text-[#C99765]">
+                “See Beyond the Image. Understand the Data.”
+              </p>
+            </div>
+            <p className="text-[#5C4E43] dark:text-[#D4C7BC] text-xs sm:text-sm leading-relaxed font-sans">
+              Welcome to our exhibition booth! ANDESHA evaluates two portraits side-by-side using the Bradley–Terry probabilistic choice model and multimodal vision AI across 8 real-world photographic qualities.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4 font-sans">
             {/* Roast Mode Toggle Button */}
             <button
               id="main-roast-toggle-btn"
               onClick={() => handleToggleRoastMode(!roastMode)}
-              className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center gap-2 cursor-pointer shadow-md ${
+              className={`px-3.5 py-2.5 rounded-lg text-xs font-medium border transition flex items-center gap-2 cursor-pointer shadow-2xs ${
                 roastMode
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-amber-900/20'
-                  : 'bg-slate-800/60 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#FAF7F2] dark:bg-[#2B231F] border-[#8C5E3C]/35 dark:border-[#C99765]/40 text-[#8C5E3C] dark:text-[#C99765]'
+                  : 'bg-white dark:bg-[#221C18] hover:bg-[#FAF7F2] dark:hover:bg-[#2B231F] border-[#E8E2D8] dark:border-[#3D332C] text-[#5C4E43] dark:text-[#D4C7BC]'
               }`}
             >
-              <Flame className={`w-4 h-4 ${roastMode ? 'text-amber-400' : 'text-slate-500'}`} />
+              <Flame className={`w-4 h-4 ${roastMode ? 'text-[#8C5E3C] dark:text-[#C99765]' : 'text-[#8C7D70] dark:text-[#A69688]'}`} />
               <div className="text-left font-mono">
-                <div className="text-[10px] uppercase text-slate-400">Roast Mode</div>
-                <div className="font-bold">{roastMode ? 'ON (Playful)' : 'OFF (Neutral)'}</div>
+                <div className="text-[10px] uppercase text-[#8C7D70] dark:text-[#A69688]">Roast Mode</div>
+                <div className="font-bold">{roastMode ? 'ON (Active)' : 'OFF (Neutral)'}</div>
               </div>
             </button>
 
@@ -402,30 +486,30 @@ export default function App() {
             <button
               id="main-prank-toggle-btn"
               onClick={() => handleTogglePrankMode(!prankMode)}
-              className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold border transition flex items-center gap-2 cursor-pointer shadow-md ${
+              className={`px-3.5 py-2.5 rounded-lg text-xs font-medium border transition flex items-center gap-2 cursor-pointer shadow-2xs ${
                 prankMode
-                  ? 'bg-purple-500/20 border-purple-500/40 text-purple-300 shadow-purple-950/30'
-                  : 'bg-slate-800/60 border-slate-700/60 text-slate-400 hover:text-slate-200'
+                  ? 'bg-purple-500/10 border-purple-500/35 text-purple-800 dark:text-purple-300'
+                  : 'bg-white dark:bg-[#221C18] hover:bg-[#FAF7F2] dark:hover:bg-[#2B231F] border-[#E8E2D8] dark:border-[#3D332C] text-[#5C4E43] dark:text-[#D4C7BC]'
               }`}
               title="Toggle Prank Mode for fictional comedic results (OFF by default)"
             >
-              <Sparkles className={`w-4 h-4 ${prankMode ? 'text-purple-400' : 'text-slate-500'}`} />
+              <Sparkles className={`w-4 h-4 ${prankMode ? 'text-purple-600 dark:text-purple-400' : 'text-[#8C7D70] dark:text-[#A69688]'}`} />
               <div className="text-left font-mono">
-                <div className="text-[10px] uppercase text-slate-400">Prank Mode 😈</div>
+                <div className="text-[10px] uppercase text-[#8C7D70] dark:text-[#A69688]">Prank Mode 😈</div>
                 <div className="font-bold">{prankMode ? 'ON (Ravi Prank)' : 'OFF'}</div>
               </div>
             </button>
 
             {/* Metrics Mini Box */}
-            <div className="bg-slate-800/40 p-3 rounded-xl border border-slate-700/50 flex items-center space-x-5 text-center">
+            <div className="bg-[#FAF7F2] dark:bg-[#221C18] p-3 rounded-lg border border-[#E8E2D8] dark:border-[#3D332C] flex items-center space-x-5 text-center">
               <div>
-                <div className="text-[9px] text-slate-400 uppercase font-mono font-bold">Categories</div>
-                <div className="text-base font-mono font-bold text-blue-400">8 Axes</div>
+                <div className="text-[9px] text-[#8C7D70] dark:text-[#A69688] uppercase font-mono">Axes</div>
+                <div className="text-base font-editorial font-medium text-[#8C5E3C] dark:text-[#C99765]">8 Axes</div>
               </div>
-              <div className="h-6 w-px bg-slate-700/50" />
+              <div className="h-6 w-px bg-[#E8E2D8] dark:bg-[#3D332C]" />
               <div>
-                <div className="text-[9px] text-slate-400 uppercase font-mono font-bold">Speech Audio</div>
-                <div className="text-base font-mono font-bold text-emerald-400">Enabled</div>
+                <div className="text-[9px] text-[#8C7D70] dark:text-[#A69688] uppercase font-mono">Voice Audio</div>
+                <div className="text-base font-editorial font-medium text-[#4A6B53] dark:text-[#6B9071]">Enabled</div>
               </div>
             </div>
           </div>
@@ -445,12 +529,26 @@ export default function App() {
               setActiveResult(null);
               setAnalysisStage('IDLE');
               setErrorDetails(null);
+              setTimeout(() => {
+                const el = document.getElementById('comparison-lab-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 50);
             }}
             onInvertPair={handleInvertPair}
             onOpenMethodology={() => setIsMethodologyOpen(true)}
           />
         ) : (
           <div className="space-y-6">
+            {/* Short Pre-Analysis Explanation Banner */}
+            <div className="bg-[#FAF7F2] dark:bg-[#221C18] border border-[#E8E2D8] dark:border-[#3D332C] rounded-xl px-5 py-4 flex items-start sm:items-center gap-3 shadow-2xs transition-colors">
+              <div className="p-2 bg-white dark:bg-[#171311] rounded-lg border border-[#E8E2D8] dark:border-[#3D332C] text-[#8C5E3C] dark:text-[#C99765] shrink-0">
+                <Info className="w-4 h-4" />
+              </div>
+              <p className="text-xs sm:text-sm text-[#5C4E43] dark:text-[#D4C7BC] leading-relaxed font-sans">
+                Compare two images side by side. ANDESHA will analyse the visual characteristics selected by the system and generate a probabilistic comparison.
+              </p>
+            </div>
+
             {/* Upload Area: 2 Columns with VS Divider */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               <div className="md:col-span-5">
@@ -468,7 +566,7 @@ export default function App() {
               </div>
 
               <div className="md:col-span-2 flex flex-col items-center justify-center space-y-4 py-2">
-                <div className="text-3xl sm:text-4xl font-black text-slate-700 italic tracking-widest select-none">
+                <div className="text-3xl sm:text-4xl font-editorial font-medium text-[#8C7D70] dark:text-[#A69688] italic tracking-widest select-none">
                   VS
                 </div>
 
@@ -476,16 +574,16 @@ export default function App() {
                   id="run-compare-btn"
                   onClick={handleRunComparison}
                   disabled={!imageA || !imageB || isAnalyzing}
-                  className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  className={`w-full py-4 px-4 min-h-[48px] rounded-lg font-semibold uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all cursor-pointer font-sans ${
                     imageA && imageB && !isAnalyzing
-                      ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/40 hover:-translate-y-0.5'
-                      : 'bg-slate-800/80 text-slate-600 border border-slate-700/50 cursor-not-allowed'
+                      ? 'bg-[#211813] hover:bg-[#3D2C21] dark:bg-[#C99765] dark:hover:bg-[#DDB082] text-[#FAF7F2] dark:text-[#171311] shadow-xs hover:-translate-y-0.5'
+                      : 'bg-[#EAE4DC] dark:bg-[#221C18] text-[#8C7D70] dark:text-[#7A6C60] border border-[#E8E2D8] dark:border-[#3D332C] cursor-not-allowed'
                   }`}
                 >
                   {isAnalyzing ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Analyzing...</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-current" />
+                      <span>Comparing...</span>
                     </>
                   ) : (
                     <>
@@ -495,11 +593,11 @@ export default function App() {
                   )}
                 </button>
 
-                <div className="text-center space-y-0.5">
-                  <p className="text-[10px] uppercase text-slate-500 tracking-wider font-mono">
+                <div className="text-center space-y-0.5 font-sans">
+                  <p className="text-[10px] uppercase text-[#8C7D70] dark:text-[#A69688] tracking-wider font-mono">
                     8-Axis Perception
                   </p>
-                  <p className="text-[10px] uppercase text-slate-500 tracking-wider font-mono">
+                  <p className="text-[10px] uppercase text-[#8C7D70] dark:text-[#A69688] tracking-wider font-mono">
                     Voice Narration Ready
                   </p>
                 </div>
@@ -520,34 +618,34 @@ export default function App() {
               </div>
             </div>
 
-            {/* ERROR CARD: Clean user-facing state when analysis fails or times out */}
+            {/* ERROR CARD */}
             {analysisStage === 'ERROR' && errorDetails && (
               <div
                 id="analysis-error-card"
-                className="max-w-xl mx-auto bg-slate-900/90 border border-red-500/30 rounded-2xl p-6 shadow-2xl space-y-4 backdrop-blur-md animate-in fade-in zoom-in-95 duration-200"
+                className="max-w-xl mx-auto bg-white dark:bg-[#1E1815] border border-red-500/30 rounded-xl p-6 shadow-xl dark:shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200"
               >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 shrink-0">
-                    <AlertCircle className="w-6 h-6" />
+                <div className="flex items-start gap-4 font-sans">
+                  <div className="p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 dark:text-red-400 shrink-0">
+                    <AlertCircle className="w-5 h-5" />
                   </div>
                   <div className="space-y-1 flex-1">
-                    <h3 className="text-base font-semibold text-white tracking-tight">
+                    <h3 className="text-sm font-semibold text-[#211813] dark:text-[#F5EFEB] tracking-tight">
                       {errorDetails.title}
                     </h3>
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-xs text-[#5C4E43] dark:text-[#D4C7BC] leading-relaxed">
                       {errorDetails.message}
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-end gap-3">
+                <div className="pt-2 border-t border-[#E8E2D8] dark:border-[#3D332C] flex flex-wrap items-center justify-end gap-3 font-sans">
                   <button
                     id="error-back-btn"
                     onClick={() => {
                       setAnalysisStage('IDLE');
                       setErrorDetails(null);
                     }}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 transition cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-lg text-xs font-medium text-[#5C4E43] dark:text-[#D4C7BC] hover:text-[#211813] dark:hover:text-[#F5EFEB] bg-[#FAF7F2] hover:bg-[#F4EFEA] dark:bg-[#221C18] dark:hover:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] transition cursor-pointer flex items-center gap-1.5"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Back to Setup</span>
@@ -556,7 +654,7 @@ export default function App() {
                   <button
                     id="error-retry-btn"
                     onClick={handleRunComparison}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-900/30 transition cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-lg text-xs font-semibold text-[#FAF7F2] dark:text-[#171311] bg-[#211813] hover:bg-[#3D2C21] dark:bg-[#C99765] dark:hover:bg-[#DDB082] shadow-xs transition cursor-pointer flex items-center gap-1.5"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Try Again</span>
@@ -565,55 +663,91 @@ export default function App() {
               </div>
             )}
 
-            {/* ACTIVE PROGRESS CARD: Explicit Stage Feedback with Animated Stepper */}
+            {/* ACTIVE PROGRESS CARD */}
             {isAnalyzing && (
               <div
                 id="analysis-progress-card"
-                className="max-w-lg mx-auto bg-slate-900/90 rounded-2xl border border-blue-500/30 p-6 shadow-2xl text-center space-y-4 backdrop-blur-md animate-in fade-in duration-200"
+                className="max-w-lg mx-auto bg-white dark:bg-[#1E1815] rounded-xl border border-[#8C5E3C]/35 dark:border-[#C99765]/40 p-6 shadow-xl dark:shadow-2xl space-y-5 animate-in fade-in duration-200"
               >
-                <div className="flex items-center justify-center gap-2.5 text-xs font-semibold text-blue-400 font-mono">
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                  <span className="uppercase tracking-wider">
-                    {analysisStage === 'VALIDATING' && 'Step 1: Format Validation'}
-                    {analysisStage === 'UPLOADING' && 'Step 2: Vector Packaging'}
-                    {analysisStage === 'ANALYZING' && 'Step 3: Multi-Axis Vision Evaluation'}
-                    {analysisStage === 'PROCESSING_RESULT' && 'Step 4: Bradley–Terry Ranking'}
-                  </span>
+                <div className="text-center space-y-1.5">
+                  <div className="flex items-center justify-center gap-2 text-xs font-semibold text-[#8C5E3C] dark:text-[#C99765] font-mono">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="uppercase tracking-wider">ANDESHA Comparison in Progress</span>
+                  </div>
+                  <p className="text-sm font-medium text-[#211813] dark:text-[#F5EFEB] font-sans">
+                    {stageMessage || 'Reading the images...'}
+                  </p>
                 </div>
 
-                <p className="text-sm font-medium text-slate-200">
-                  {stageMessage || 'Processing pairwise visual signals...'}
-                </p>
-
-                {/* Stepper Dots & Progress Bar */}
-                <div className="space-y-2">
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full transition-all duration-500 rounded-full"
-                      style={{
-                        width:
-                          analysisStage === 'VALIDATING'
-                            ? '25%'
-                            : analysisStage === 'UPLOADING'
-                            ? '50%'
-                            : analysisStage === 'ANALYZING'
-                            ? '75%'
-                            : '95%',
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 px-1">
-                    <span className={analysisStage === 'VALIDATING' ? 'text-blue-400 font-bold' : ''}>Validate</span>
-                    <span className={analysisStage === 'UPLOADING' ? 'text-blue-400 font-bold' : ''}>Transmit</span>
-                    <span className={analysisStage === 'ANALYZING' ? 'text-blue-400 font-bold' : ''}>Vision Model</span>
-                    <span className={analysisStage === 'PROCESSING_RESULT' ? 'text-blue-400 font-bold' : ''}>Bradley–Terry</span>
-                  </div>
+                {/* Progress Bar */}
+                <div className="w-full bg-[#FAF7F2] dark:bg-[#171311] h-1.5 rounded-full overflow-hidden border border-[#E8E2D8] dark:border-[#3D332C]">
+                  <div
+                    className="bg-[#8C5E3C] dark:bg-[#C99765] h-full transition-all duration-500 rounded-full"
+                    style={{
+                      width:
+                        analysisStage === 'VALIDATING'
+                          ? '25%'
+                          : analysisStage === 'UPLOADING'
+                          ? '50%'
+                          : analysisStage === 'ANALYZING'
+                          ? '75%'
+                          : '95%',
+                    }}
+                  />
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                {/* Plain-Language 4-Step Sequence */}
+                <ol className="space-y-2 text-left font-sans text-xs">
+                  {[
+                    { key: 'VALIDATING', label: 'Reading the images', order: 1 },
+                    { key: 'UPLOADING', label: 'Analysing visual characteristics', order: 2 },
+                    { key: 'ANALYZING', label: 'Comparing the two results', order: 3 },
+                    { key: 'PROCESSING_RESULT', label: 'Preparing the explanation', order: 4 },
+                  ].map((step) => {
+                    const currentOrder =
+                      analysisStage === 'VALIDATING'
+                        ? 1
+                        : analysisStage === 'UPLOADING'
+                        ? 2
+                        : analysisStage === 'ANALYZING'
+                        ? 3
+                        : 4;
+                    const isDone = currentOrder > step.order;
+                    const isCurrent = currentOrder === step.order;
+
+                    return (
+                      <li
+                        key={step.key}
+                        className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg border transition-colors ${
+                          isCurrent
+                            ? 'bg-[#FAF7F2] dark:bg-[#221C18] border-[#8C5E3C]/40 dark:border-[#C99765]/40 text-[#211813] dark:text-[#F5EFEB] font-medium'
+                            : isDone
+                            ? 'bg-[#FAF7F2]/40 dark:bg-[#171311]/50 border-[#E8E2D8] dark:border-[#3D332C] text-[#4A6B53] dark:text-[#6B9071]'
+                            : 'bg-transparent border-[#E8E2D8]/60 dark:border-[#3D332C]/60 text-[#8C7D70] dark:text-[#A69688]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="font-mono text-[11px] tabular-nums opacity-75">
+                            0{step.order}
+                          </span>
+                          <span>{step.label}</span>
+                        </div>
+                        {isDone ? (
+                          <CheckCircle2 className="w-4 h-4 text-[#4A6B53] dark:text-[#6B9071] shrink-0" />
+                        ) : isCurrent ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#8C5E3C] dark:text-[#C99765] shrink-0" />
+                        ) : (
+                          <span className="text-[10px] font-mono uppercase">Pending</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+
+                <div className="pt-2 border-t border-[#E8E2D8] dark:border-[#3D332C] flex items-center justify-between text-[11px] text-[#8C7D70] dark:text-[#A69688] font-sans">
                   <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Hard timeout active (65s limit)</span>
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Evaluated in memory · No photos saved</span>
                   </div>
                   <button
                     onClick={() => {
@@ -624,7 +758,7 @@ export default function App() {
                       setAnalysisStage('IDLE');
                       setStageMessage('');
                     }}
-                    className="text-red-400 hover:text-red-300 font-medium text-[11px] transition cursor-pointer"
+                    className="text-red-700 dark:text-red-400 hover:underline font-medium text-[11px] transition cursor-pointer px-2 py-1"
                   >
                     Cancel
                   </button>
@@ -639,75 +773,125 @@ export default function App() {
             />
 
             {/* Scientific Guardrails Checklist */}
-            <div className="grid sm:grid-cols-3 gap-4 text-xs text-slate-400">
-              <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800/80 flex items-start gap-3">
-                <div className="p-1.5 bg-blue-500/10 rounded-lg text-blue-400 shrink-0">
+            <div className="grid sm:grid-cols-3 gap-4 text-xs text-[#5C4E43] dark:text-[#D4C7BC] font-sans">
+              <div className="p-4 bg-white dark:bg-[#1E1815] rounded-xl border border-[#E8E2D8] dark:border-[#3D332C] shadow-2xs flex items-start gap-3">
+                <div className="p-1.5 bg-[#FAF7F2] dark:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] rounded-lg text-[#8C5E3C] dark:text-[#C99765] shrink-0">
                   <Sliders className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-semibold text-slate-200 block mb-0.5">8 Visual Axes</span>
+                  <span className="font-semibold text-[#211813] dark:text-[#F5EFEB] block mb-0.5">8 Visual Axes</span>
                   Outputs structured categories (lighting, symmetry, styling, expressions, etc.) with relative scores.
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800/80 flex items-start gap-3">
-                <div className="p-1.5 bg-blue-500/10 rounded-lg text-blue-400 shrink-0">
+              <div className="p-4 bg-white dark:bg-[#1E1815] rounded-xl border border-[#E8E2D8] dark:border-[#3D332C] shadow-2xs flex items-start gap-3">
+                <div className="p-1.5 bg-[#FAF7F2] dark:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] rounded-lg text-[#8C5E3C] dark:text-[#C99765] shrink-0">
                   <EyeOff className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-semibold text-slate-200 block mb-0.5">Zero Image Retention</span>
+                  <span className="font-semibold text-[#211813] dark:text-[#F5EFEB] block mb-0.5">Zero Image Retention</span>
                   Uploaded photographs are evaluated ephemerally in RAM and immediately discarded.
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800/80 flex items-start gap-3">
-                <div className="p-1.5 bg-emerald-500/10 rounded-lg text-emerald-400 shrink-0">
+              <div className="p-4 bg-white dark:bg-[#1E1815] rounded-xl border border-[#E8E2D8] dark:border-[#3D332C] shadow-2xs flex items-start gap-3">
+                <div className="p-1.5 bg-[#FAF7F2] dark:bg-[#2B231F] border border-[#E8E2D8] dark:border-[#3D332C] rounded-lg text-[#4A6B53] dark:text-[#6B9071] shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="font-semibold text-slate-200 block mb-0.5">Strict Adult-Only (18+)</span>
+                  <span className="font-semibold text-[#211813] dark:text-[#F5EFEB] block mb-0.5">Strict Adult-Only (18+)</span>
                   Enforces 18+ consenting adult verification and respectful, non-derogatory analysis.
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {/* First-Time Visitor Guide: How ANDESHA Works (4 Simple Visual Steps) */}
+        <HowItWorksSection
+          onTryExperiment={() => {
+            const el = document.getElementById('comparison-lab-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+
+        {/* Interactive Glossary: The Science Behind ANDESHA */}
+        <ScienceBehindSection />
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-900/80 border-t border-slate-800 py-4 px-4 sm:px-8 text-[11px] text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-6 uppercase tracking-widest font-medium text-[10px]">
-            <button
-              onClick={() => setIsMethodologyOpen(true)}
-              className="hover:text-slate-300 transition-colors cursor-pointer"
-            >
-              Ethical Guidelines
-            </button>
-            <button
-              onClick={() => setIsMethodologyOpen(true)}
-              className="hover:text-slate-300 transition-colors cursor-pointer"
-            >
-              Data Retention Policy
-            </button>
-            <button
-              onClick={() => setIsMethodologyOpen(true)}
-              className="hover:text-slate-300 transition-colors cursor-pointer"
-            >
-              Methodology
-            </button>
+      <footer className="bg-[#FAF7F2]/90 dark:bg-[#171311]/90 border-t border-[#E8E2D8] dark:border-[#3D332C] py-6 px-4 sm:px-8 text-[11px] text-[#8C7D70] dark:text-[#A69688] transition-colors font-sans">
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#E8E2D8] dark:border-[#3D332C]">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsAboutOpen(true)}
+                className="w-8 h-8 bg-[#211813] dark:bg-[#C99765] rounded-lg flex items-center justify-center font-editorial font-bold text-[#FAF7F2] dark:text-[#171311] text-sm hover:scale-105 transition-transform cursor-pointer"
+                title="About ANDESHA"
+              >
+                A
+              </button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-editorial font-medium text-sm text-[#211813] dark:text-[#F5EFEB]">ANDESHA</span>
+                  <span className="text-[11px] text-[#8C7D70] dark:text-[#A69688]">· AI-Powered Visual Analysis Platform</span>
+                </div>
+                <p className="text-[11px] font-editorial italic text-[#8C5E3C] dark:text-[#C99765]">
+                  “See Beyond the Image. Understand the Data.”
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 uppercase tracking-wider font-medium text-[10px]">
+              <button
+                onClick={() => setIsAboutOpen(true)}
+                className="text-[#8C5E3C] dark:text-[#C99765] hover:underline transition-colors cursor-pointer"
+              >
+                About ANDESHA
+              </button>
+              <button
+                onClick={() => setIsMethodologyOpen(true)}
+                className="hover:text-[#211813] dark:hover:text-[#F5EFEB] transition-colors cursor-pointer"
+              >
+                Methodology
+              </button>
+              <button
+                onClick={() => setIsMethodologyOpen(true)}
+                className="hover:text-[#211813] dark:hover:text-[#F5EFEB] transition-colors cursor-pointer"
+              >
+                Ethical Guidelines
+              </button>
+              <button
+                onClick={() => setIsMethodologyOpen(true)}
+                className="hover:text-[#211813] dark:hover:text-[#F5EFEB] transition-colors cursor-pointer"
+              >
+                Zero Retention Policy
+              </button>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <span className="px-2 py-0.5 border border-slate-700 rounded text-[10px] font-mono text-slate-400">
-              ENC-V3
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-[#8C7D70] dark:text-[#A69688]">
+            <span>
+              Created by <strong className="text-[#211813] dark:text-[#F5EFEB]">Andrew & Apeksha</strong> for School Exhibition · STEM & AI Demonstration
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              <span>Strict Privacy Mode: Active</span>
-            </span>
+            <div className="flex items-center space-x-4">
+              <span className="px-2 py-0.5 border border-[#E8E2D8] dark:border-[#3D332C] rounded font-mono text-[10px]">
+                ANDESHA-PROD
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4A6B53] dark:bg-[#6B9071]"></span>
+                <span>RAM-Only Ephemeral Mode</span>
+              </span>
+            </div>
           </div>
         </div>
       </footer>
+
+      {/* About Modal (Introducing ANDESHA & Creators Andrew & Apeksha) */}
+      <AboutModal
+        isOpen={isAboutOpen}
+        onClose={() => setIsAboutOpen(false)}
+      />
 
       {/* Methodology & Theoretical Framework Drawer */}
       <MethodologyDrawer

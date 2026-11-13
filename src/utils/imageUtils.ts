@@ -2,7 +2,7 @@
  * Image processing utilities for pairwise perception experiments
  */
 
-export async function fileToDataUrl(file: File, maxDimension: number = 960): Promise<string> {
+export async function fileToDataUrl(file: File, maxDimension: number = 640): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -32,7 +32,7 @@ export async function fileToDataUrl(file: File, maxDimension: number = 960): Pro
 
           ctx.drawImage(img, 0, 0, width, height);
           // Convert to efficient JPEG
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.80);
           resolve(compressedDataUrl);
         } catch (err) {
           resolve(rawDataUrl);
@@ -87,7 +87,7 @@ function generateFallbackPortrait(title: string, hue: number): string {
   return canvas.toDataURL('image/jpeg', 0.85);
 }
 
-export async function urlToDataUrl(url: string, maxDimension: number = 960): Promise<string> {
+export async function urlToDataUrl(url: string, maxDimension: number = 640): Promise<string> {
   if (url.startsWith('data:image')) {
     return url;
   }
@@ -142,7 +142,7 @@ export async function urlToDataUrl(url: string, maxDimension: number = 960): Pro
           return resolve(generateFallbackPortrait('Subject Alpha', 210));
         }
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
+        resolve(canvas.toDataURL('image/jpeg', 0.80));
       } catch (err) {
         resolve(generateFallbackPortrait('Benchmark Subject', 220));
       }
